@@ -25,6 +25,18 @@ package %w[slurm* libslurm*] do
   action :purge
 end
 
+slurm_build_deps = value_for_platform(
+  'ubuntu' => {
+    'default' => %w(libjson-c-dev libhttp-parser-dev),
+  },
+  'default' => %w(json-c-devel http-parser-devel)
+)
+
+package slurm_build_deps do
+  retries 3
+  retry_delay 5
+end
+
 case node['cfncluster']['cfn_node_type']
 when 'MasterServer', nil
   slurm_tarball = "#{node['cfncluster']['sources_dir']}/slurm-#{node['cfncluster']['slurm']['version']}.tar.gz"
